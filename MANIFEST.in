@@ -1,0 +1,2 @@
+include *.txt
+recursive-include sql_schema_diff *.py
