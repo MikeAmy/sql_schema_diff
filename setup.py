@@ -20,4 +20,5 @@ setup(
     long_description=open(
         os.path.join(os.path.dirname(__file__), 'README.rst'),
     ).read().strip(),
+    install_requires=['sql_lexer']
 )
