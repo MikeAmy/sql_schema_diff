@@ -1,5 +1,5 @@
 
-from .. import  Column, Index, Table
+from .. import Schema, Column, Index, Table
 
 def Table_introspect_postgres(table, tables, introspection, cursor):
     # Field indices
@@ -33,7 +33,7 @@ def Table_introspect_postgres(table, tables, introspection, cursor):
         index = Index(index_name)
         index.unique = indisunique
         index.varchar_pattern_ops = index_name.endswith('_like') # can also look for indclass == 10057
-        index.columns = tuple(map(lambda s: int(s)-1, str(index_column_numbers).split()))
+        index.column_ids = map(lambda s: int(s)-1, str(index_column_numbers).split())
         table.add_index(index)
 
 Table.introspect_postgres = Table_introspect_postgres
@@ -75,4 +75,4 @@ def Schema_introspect_postgres(schema, connection):
     for table_name, table in schema.tables.iteritems():
         table.introspect_postgres(schema.tables, introspection, cursor)
 
-schema.introspect_postgres = Schema_introspect_postgres
+Schema.introspect_postgres = Schema_introspect_postgres

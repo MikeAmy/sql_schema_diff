@@ -2,7 +2,7 @@ from distutils.core import setup
 import os
 
 setup(
-    name='python_sql_schema_comparison',
+    name='sql_schema_diff',
     version='1.0',
     description='Python SQL Schema Parsing and Diffing',
     author='Mike Amy',
@@ -20,5 +20,5 @@ setup(
     long_description=open(
         os.path.join(os.path.dirname(__file__), 'README.rst'),
     ).read().strip(),
-    install_requires=['sql_lexer']
+#    install_requires=['sql_lexer']
 )

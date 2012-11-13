@@ -1,9 +1,10 @@
 
-import sqlparse.lexer
-from sqlparse.tokens import Newline, Whitespace, Punctuation, Keyword, Token
-from sqlparse.keywords import KEYWORDS
+from sql_lexer.sql import Token
+from sql_lexer.lexer import tokenize
+from sql_lexer.tokens import Newline, Whitespace, Punctuation, Keyword
+from sql_lexer.keywords import KEYWORDS
 
-from sql_schema_diff import Table, Index, Column
+from sql_schema_diff import Schema, Table, Index, Column
 
 assert 'VARCHAR' in KEYWORDS
 
@@ -98,7 +99,7 @@ class ColumnParser(object):
                     parse_method(tokens)
 
     def VARCHAR(parser, tokens):
-        parser.column.set_data_type("varchar(%i)" % tokens.expect('(', int, ')'))
+        parser.column.set_data_type("varchar(%i)" % tokens.expect('(', int, ')')[0])
 
     def NUMERIC(parser, tokens):
         parser.column.set_data_type("numeric(%i, %i)" % tokens.expect('(', int, ',', int, ')'))
@@ -144,9 +145,7 @@ class ColumnParser(object):
     def CHAR(parser, tokens):
         if tokens.peek() == '(':
             tokens.next()
-            count = tokens.next()
-            tokens.expect(')')
-            parser.column.set_data_type("char(%s)" % count)
+            parser.column.set_data_type("char(%s)" % tokens.expect(int, ')')[0])
         else:
             parser.column.set_data_type('char')
 
@@ -195,7 +194,6 @@ class ColumnParser(object):
         while next != ")":
             next = tokens.next()
             assert next != "("
-Column.Parser = ColumnParser
 
 
 class TableParser(object):
@@ -215,13 +213,14 @@ class TableParser(object):
             else:
                 column_identifier = sqlid(token_value)
                 table = parser.table
-                column = Column(table.schema, parser, table.ordinal_position, column_identifier)
+                column = Column(table.schema, parser.table, table.ordinal_position, column_identifier)
                 table.ordinal_position += 1
-                column.parse(tokens)
-                table.columns[column_identifier] = column
+                ColumnParser(column).parse(tokens)
+                table.add_column(column_identifier, column)
 
     def UNIQUE(parser, tokens):
-        IndexParser(Index()).parse_index_spec(tokens)
+        table = parser.table
+        IndexParser(Index("uniq"), table).parse(tokens, table.identifier)
 
     def ADD_CONSTRAINT(parser, tables, tokens):
         constraint_id, constraint_type = tokens.expect(sqlid, str)
@@ -235,7 +234,6 @@ class TableParser(object):
                     tokens.expect('DEFERRED')
         else:
             raise Exception()
-Table.Parser = TableParser
 
 
 class IndexParser(object):
@@ -275,15 +273,13 @@ class IndexParser(object):
         index.varchar_pattern_ops = varchar_pattern_ops
         table.add_index(index)
 
-Index.Parser = IndexParser
-
 
 class SchemaParser(object):
     def __init__(parser, schema):
         parser.schema = schema
 
     def parse(parser, statements_string):
-        schema_tokens = Tokens(sqlparse.lexer.tokenize(statements_string))
+        schema_tokens = Tokens(tokenize(statements_string))
         for statement_tokens in schema_tokens.split(Token(Punctuation, ';')):
             if statement_tokens:
                 first_token = statement_tokens.next_token()
@@ -309,7 +305,7 @@ class SchemaParser(object):
     def CREATE_TABLE(parser, identifier, tokens):
         schema = parser.schema
         table = Table(schema, identifier)
-        table.parse(tokens)
+        TableParser(table).parse(tokens)
         schema.tables[identifier] = table
 
     def parse_index(parser, identifier, index, tokens):
@@ -336,4 +332,7 @@ class SchemaParser(object):
                 keyword = keyword + "_" + tokens.next()
             getattr(table, keyword)(schema.tables, tokens)
 
-schema.Parser = SchemaParser
+
+def Schema_parse(schema, statements_string):
+    SchemaParser(schema).parse(statements_string)
+Schema.parse = Schema_parse

@@ -1,6 +1,5 @@
 
-from . import Column, Index, Table
-from sql_schema_diff.schema import Schema
+from sql_schema_diff.schema import Schema, Column, Index, Table
 
 
 def Schema_resolve_references(schema):
@@ -21,28 +20,34 @@ def Column_resolve_references(column, tables):
     if isinstance(column.references, tuple):
         other_table_name, other_column_id = column.references
         other_table = tables[other_table_name]
-        column.references = other_table.resolve_column(other_column_id)
+        column.references = other_table.resolve_column(other_column_id, column.table.identifier+"."+column.identifier)
         # Postgres adds indices for foreign keys
         index = Index(column.identifier.replace(".", '_') + "_" + column.references.identifier.replace(".", "_"))
         index.unique = False
-        index.columns = (column,)
+        index.column_ids = (column.identifier,)
         column.table.add_index(index)
 Column.resolve_references = Column_resolve_references
 
 
 def Index_resolve_references(index, table):
-    column_list = map(table.resolve_column, index.column_ids)
+    column_list = [table.resolve_column(column_id, index) for column_id in index.column_ids]
     # sort columns if postgres
     column_list.sort(key=lambda column:column.identifier)
     index.columns = tuple(column_list)
-Index.resolve_references = Table_resolve_references
+Index.resolve_references = Index_resolve_references
 
 
-def Table_resolve_column(table, column_spec):
+def Table_resolve_column(table, column_spec, owner):
     if isinstance(column_spec, Column):
         return column_spec
     elif isinstance(column_spec, int):
         return table.column_at_index(column_spec)
     else:
-        return table.columns[column_spec]
+        try:
+            return table.columns[column_spec]
+        except KeyError:
+            raise Exception(
+                "%s: referenced column %s could not be found in %s" % (
+                    owner, column_spec, table
+                ))
 Table.resolve_column = Table_resolve_column
