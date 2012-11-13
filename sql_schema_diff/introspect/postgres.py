@@ -1,5 +1,7 @@
 
-from .. import Schema, Column, Index, Table
+from sql_schema_diff import Schema, Column, Index, Table
+from sql_schema_diff.parse import ColumnParser
+
 
 def Table_introspect_postgres(table, tables, introspection, cursor):
     # Field indices
@@ -58,15 +60,15 @@ def Schema_introspect_postgres(schema, connection):
         column = Column(schema, table, ordinal_position-1, column_name)
         column.nullable = (is_nullable == "YES")
         if character_maximum_length:
-            column.column_type = "varchar(%i)" % character_maximum_length
+            column.data_type = "varchar(%i)" % character_maximum_length
         elif numeric_precision:
             if numeric_scale != 0:
-                column.column_type = "numeric(%s, %s)" % (numeric_precision, numeric_scale)
+                column.data_type = "numeric(%s, %s)" % (numeric_precision, numeric_scale)
             else:
-                column.column_type = "numeric(%s)" % numeric_precision
+                column.data_type = "numeric(%s)" % numeric_precision
         else:
-            getattr(column, data_type.upper().replace(" ", "_"))(None)
-
+            column_parser = ColumnParser(column)
+            getattr(column_parser, data_type.upper().replace(" ", "_"))(None)
         if column_default:
             column.default = column_default
         table.add_column(column_name, column)
