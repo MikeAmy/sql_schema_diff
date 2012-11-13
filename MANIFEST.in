@@ -1,1 +1,4 @@
 recursive-include sql_schema_diff/ *.py
+recursive-include sql_schema_diff/schema *.py
+recursive-include sql_schema_diff/parse *.py
+recursive-include sql_schema_diff/introspect *.py
