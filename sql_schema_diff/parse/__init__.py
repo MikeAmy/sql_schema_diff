@@ -3,7 +3,7 @@ import sqlparse.lexer
 from sqlparse.tokens import Newline, Whitespace, Punctuation, Keyword, Token
 from sqlparse.keywords import KEYWORDS
 
-from .. import Schema, Table, Index, Column
+from sql_schema_diff import Table, Index, Column
 
 assert 'VARCHAR' in KEYWORDS
 
@@ -336,4 +336,4 @@ class SchemaParser(object):
                 keyword = keyword + "_" + tokens.next()
             getattr(table, keyword)(schema.tables, tokens)
 
-Schema.Parser = SchemaParser
+schema.Parser = SchemaParser

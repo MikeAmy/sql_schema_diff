@@ -1,5 +1,5 @@
 
-from .. import Schema, Column, Index, Table
+from .. import  Column, Index, Table
 
 def Table_introspect_postgres(table, tables, introspection, cursor):
     # Field indices
@@ -75,4 +75,4 @@ def Schema_introspect_postgres(schema, connection):
     for table_name, table in schema.tables.iteritems():
         table.introspect_postgres(schema.tables, introspection, cursor)
 
-Schema.introspect_postgres = Schema_introspect_postgres
+schema.introspect_postgres = Schema_introspect_postgres

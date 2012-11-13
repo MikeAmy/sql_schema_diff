@@ -1,5 +1,6 @@
 
-from schema import Schema, Table, Index, Column
+from sql_schema_diff.schema import  Table, Index, Column
+from sql_schema_diff.schema import Schema
 
 class Difference(object):
     def __init__(diff):

@@ -1,5 +1,4 @@
-
-from Index import Index
+from sql_schema_diff.schema import Index
 
 class Column(object):
     def __init__(column, schema, table, ordinal_position, identifier,

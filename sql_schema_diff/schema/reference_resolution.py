@@ -1,5 +1,6 @@
 
-from . import Column, Index, Schema, Table
+from . import Column, Index, Table
+from sql_schema_diff.schema import Schema
 
 
 def Schema_resolve_references(schema):
