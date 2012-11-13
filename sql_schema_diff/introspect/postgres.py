@@ -9,9 +9,9 @@ def Table_introspect_postgres(table, tables, introspection, cursor):
     for column_name, info_dict in introspection.get_indexes(cursor, table.identifier).iteritems():
         column = columns[column_name]
         if info_dict['primary_key']:
-            column.mark_as_primary()
+            column.mark_primary()
         if info_dict['unique']:
-            column.mark_as_unique()
+            column.mark_unique()
     del column
 
     # Foreign keys
