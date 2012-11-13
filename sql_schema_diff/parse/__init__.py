@@ -330,7 +330,7 @@ class SchemaParser(object):
             keyword = tokens.next()
             if keyword == "ADD":
                 keyword = keyword + "_" + tokens.next()
-            getattr(table, keyword)(schema.tables, tokens)
+            getattr(parser, keyword)(schema.tables, tokens)
 
 
 def Schema_parse(schema, statements_string):
