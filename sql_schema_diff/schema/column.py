@@ -49,9 +49,9 @@ class Column(object):
         index.column_ids = (column.identifier,)
         column.table.add_index(index)
 
-    def set_data_type(self, data_type):
-        assert self.data_type is None
-        self.data_type = data_type
+    def set_data_type(column, data_type):
+        assert column.data_type is None, (column, column.data_type, data_type)
+        column.data_type = data_type
 
     def __eq__(column, other):
         return column.identifier == other.identifier

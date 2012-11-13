@@ -102,7 +102,8 @@ class ColumnParser(object):
         parser.column.set_data_type("varchar(%i)" % tokens.expect('(', int, ')')[0])
 
     def NUMERIC(parser, tokens):
-        parser.column.set_data_type("numeric(%i, %i)" % tokens.expect('(', int, ',', int, ')'))
+        digits, decimal_places = tokens.expect('(', int, ',', int, ')')
+        parser.column.set_data_type("numeric(%i, %i)" % (digits, decimal_places))
 
     def UUID(parser, _):
         parser.column.set_data_type("UUID")
@@ -114,11 +115,11 @@ class ColumnParser(object):
         parser.column.set_data_type("datetime")
 
     def TIMESTAMP(parser, tokens):
-        parser.column.set_data_type("datetime")
         if tokens.next() == "with":
-            if tokens.next() == "time":
-                tokens.expect("zone")
-                parser.column.set_data_type("datetime with time zone")
+            tokens.expect('time', 'zone')
+            parser.column.set_data_type("datetime with time zone")
+            return
+        parser.column.set_data_type("datetime")
 
     def TIMESTAMP_WITH_TIME_ZONE(parser, tokens):
         parser.column.set_data_type("datetime with time zone")
@@ -310,7 +311,7 @@ class SchemaParser(object):
 
     def parse_index(parser, identifier, index, tokens):
         schema = parser.schema
-        table_id = tokens.expect('ON', sqlid)
+        table_id, = tokens.expect('ON', sqlid)
         table = schema.tables[table_id]
         IndexParser(index, table).parse(tokens, identifier)
 
