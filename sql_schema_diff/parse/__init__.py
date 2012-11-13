@@ -181,7 +181,7 @@ class ColumnParser(object):
         column = parser.column
         column.serial = True
         column.set_data_type("numeric(32)")
-        column.default = "nextval('%s_seq'::regclass)" % column.identifier.replace(".", "_")
+        column.default = "nextval('%s_%s_seq'::regclass)" % (column.table.identifier, column.identifier)
 
     def DEFERRABLE(parser, tokens):
         parser.column.deferrable = True
