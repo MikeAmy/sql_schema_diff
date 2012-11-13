@@ -7,7 +7,7 @@ def Table_introspect_postgres(table, tables, introspection, cursor):
     # Field indices
     columns = table.columns
     for column_name, info_dict in introspection.get_indexes(cursor, table.identifier).iteritems():
-        column = columns[table.identifier+'.'+column_name]
+        column = columns[column_name]
         if info_dict['primary_key']:
             column.mark_as_primary()
         if info_dict['unique']:
@@ -16,7 +16,7 @@ def Table_introspect_postgres(table, tables, introspection, cursor):
 
     # Foreign keys
     for column_index, (column_index_other_table, other_table_name) in introspection.get_relations(cursor,
-                                                                                                table.identifier).iteritems():
+                                                                                                  table.identifier).iteritems():
         column = table.column_at_index(column_index)
         column.references = (other_table_name, column_index_other_table)
 
