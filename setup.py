@@ -8,7 +8,12 @@ setup(
     author='Mike Amy',
     author_email='cocoade@googlemail.com',
     url='https://github.com/MikeAmy/python_sql_schema_comparison',
-    packages=['sql_schema_diff',],
+    packages=[
+        'sql_schema_diff',
+        'sql_schema_diff.schema',
+        'sql_schema_diff.parse',
+        'sql_schema_diff.introspect',
+    ],
     keywords=['SQL', 'database', 'schema', 'postgres', 'sqlite', 'diff'],
     classifiers=[
         'Development Status :: 1 - Planning',
