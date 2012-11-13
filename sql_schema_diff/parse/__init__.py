@@ -181,6 +181,7 @@ class ColumnParser(object):
         column = parser.column
         column.serial = True
         column.set_data_type("numeric(32)")
+        # postgres:
         column.default = "nextval('%s_%s_seq'::regclass)" % (column.table.identifier, column.identifier)
 
     def DEFERRABLE(parser, tokens):
@@ -221,7 +222,7 @@ class TableParser(object):
 
     def UNIQUE(parser, tokens):
         table = parser.table
-        IndexParser(Index("uniq"), table).parse(tokens, table.identifier)
+        IndexParser(Index("uniq", unique=True), table).parse(tokens, table.identifier)
 
     def ADD_CONSTRAINT(parser, tables, tokens):
         constraint_id, constraint_type = tokens.expect(sqlid, str)
@@ -270,7 +271,6 @@ class IndexParser(object):
                     )
         index.identifier = "_".join([table.identifier] + column_ids)
         index.column_ids = column_ids
-        index.unique = True
         index.varchar_pattern_ops = varchar_pattern_ops
         table.add_index(index)
 
@@ -316,7 +316,7 @@ class SchemaParser(object):
         IndexParser(index, table).parse(tokens, identifier)
 
     def CREATE_INDEX(parser, identifier, tokens):
-        index = Index(identifier)
+        index = Index(identifier, unique=False)
         parser.parse_index(identifier, index, tokens)
 
     def CREATE_UNIQUE_INDEX(parser, identifier, tokens):

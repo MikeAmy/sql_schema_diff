@@ -22,8 +22,9 @@ def Column_resolve_references(column, tables):
         other_table = tables[other_table_name]
         column.references = other_table.resolve_column(other_column_id, column.table.identifier+"."+column.identifier)
         # Postgres adds indices for foreign keys
-        index = Index(column.identifier.replace(".", '_') + "_" + column.references.identifier.replace(".", "_"))
-        index.unique = False
+        index = Index("%s_%s_%s_%s" % (column.table.identifier, column.identifier,
+                                       column.references.table.identifier, column.references.identifier),
+                      unique=False)
         index.column_ids = (column.identifier,)
         column.table.add_index(index)
 Column.resolve_references = Column_resolve_references

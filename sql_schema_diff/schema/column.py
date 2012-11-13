@@ -37,15 +37,13 @@ class Column(object):
     def mark_primary(column):
         column.primary = True
         column.nullable = False # I guess
-        index = Index(column.identifier.replace(".", '_'))
-        index.unique = True
+        index = Index(column.identifier.replace(".", '_'), unique=True)
         index.column_ids = (column.identifier,)
         column.table.add_index(index)
 
     def mark_unique(column):
         column.unique = True
-        index = Index(column.identifier.replace(".", '_'))
-        index.unique = True
+        index = Index(column.identifier.replace(".", '_'), unique=True)
         index.column_ids = (column.identifier,)
         column.table.add_index(index)
 

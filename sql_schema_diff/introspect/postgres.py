@@ -32,8 +32,7 @@ def Table_introspect_postgres(table, tables, introspection, cursor):
                    "        AND indisprimary != 't' "
                    ");" % table.identifier)
     for index_name, index_column_numbers, indisunique in cursor.fetchall():
-        index = Index(index_name)
-        index.unique = indisunique
+        index = Index(index_name, unique=indisunique)
         index.varchar_pattern_ops = index_name.endswith('_like') # can also look for indclass == 10057
         index.column_ids = map(lambda s: int(s)-1, str(index_column_numbers).split())
         table.add_index(index)

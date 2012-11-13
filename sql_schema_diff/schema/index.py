@@ -1,9 +1,9 @@
 
 class Index(object):
-    def __init__(index, identifier):
+    def __init__(index, identifier, unique):
         index.identifier = identifier
         index.column_ids = None
-        index.unique = False
+        index.unique = unique
         index.varchar_pattern_ops = False
 
     def __repr__(index):

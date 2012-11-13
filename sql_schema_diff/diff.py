@@ -12,7 +12,7 @@ class Difference(object):
         return bool(diff.deletions or diff.additions or diff.changes)
 
     def __unicode__(diff):
-        return u'''%i diffs...
+        return u'''%i differences...
 %i additions:
     %s
 %i deletions:
