@@ -12,7 +12,7 @@ class Difference(object):
         return bool(diff.deletions or diff.additions or diff.changes)
 
     def __unicode__(diff):
-        return u'''%i differences...
+        return u'''%i differences:
 %i additions:
     %s
 %i deletions:
@@ -36,9 +36,7 @@ class Difference(object):
         this_keys = set(this.keys())
         other_keys =  set(other.keys())
         for name in this_keys.intersection(other_keys):
-            #diff.between(name)
             this[name].diff(other[name], diff)
-            #diff.done()
         for name in this_keys.difference(other_keys):
             diff.deletions.append(this[name])
         for name in other_keys.difference(this_keys):
