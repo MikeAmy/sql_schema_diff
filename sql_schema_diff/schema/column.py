@@ -35,18 +35,19 @@ class Column(object):
     def __unicode__(column):
         return u"COLUMN " + column.name
 
-    def mark_primary(column):
-        column.primary = True
-        column.nullable = False # I guess
-        index = Index(column.name.replace(".", '_'), unique=True)
+    def create_index(column, unique):
+        index = Index(column.name.replace(".", '_'), unique=unique)
         index.column_ids = (column.identifier,)
         column.table.add_index(index)
 
+    def mark_primary(column):
+        column.primary = True
+        column.nullable = False # I guess
+        column.create_index(unique=True)
+
     def mark_unique(column):
         column.unique = True
-        index = Index(column.name.replace(".", '_'), unique=True)
-        index.column_ids = (column.identifier,)
-        column.table.add_index(index)
+        column.create_index(unique=True)
 
     def set_data_type(column, data_type):
         assert column.data_type is None, (column, column.data_type, data_type)
