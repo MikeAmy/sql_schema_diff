@@ -16,6 +16,7 @@ class Column(object):
         column.table = table
 
         column.identifier = identifier
+        column.name = column.table.identifier + "." + column.identifier
         column.ordinal_position = ordinal_position
 
         column.data_type = data_type
@@ -29,21 +30,21 @@ class Column(object):
         column.deferrable = deferrable
 
     def __repr__(column):
-        return column.identifier
+        return column.name
 
     def __unicode__(column):
-        return u"FIELD " + column.identifier
+        return u"COLUMN " + column.name
 
     def mark_primary(column):
         column.primary = True
         column.nullable = False # I guess
-        index = Index(column.identifier.replace(".", '_'), unique=True)
+        index = Index(column.name.replace(".", '_'), unique=True)
         index.column_ids = (column.identifier,)
         column.table.add_index(index)
 
     def mark_unique(column):
         column.unique = True
-        index = Index(column.identifier.replace(".", '_'), unique=True)
+        index = Index(column.name.replace(".", '_'), unique=True)
         index.column_ids = (column.identifier,)
         column.table.add_index(index)
 
