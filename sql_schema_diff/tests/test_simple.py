@@ -58,3 +58,14 @@ COMMIT;
     assert len(difference.deletions) == 1
     assert len(difference.additions) == 1
 
+def test_comments():
+    schema1 = Schema()
+    schema1.parse("""
+-- Comment 1
+BEGIN;
+-- Comment 2
+COMMIT;
+-- Comment 3
+"""
+    )
+
