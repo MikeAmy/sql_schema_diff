@@ -287,8 +287,7 @@ class SchemaParser(object):
                 try:
                     getattr(parser, first_token.value)(statement_tokens)
                 except AttributeError:
-                    print first_token.ttype
-                    raise
+                    raise Exception("Could not parse %s" % first_token)
 
     def BEGIN(parser, _):
         pass
