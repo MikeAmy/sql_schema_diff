@@ -20,7 +20,7 @@ def Column_resolve_references(column, tables):
     if isinstance(column.references, tuple):
         other_table_name, other_column_id = column.references
         other_table = tables[other_table_name]
-        column.references = other_table.resolve_column(other_column_id, column.table.identifier+"."+column.identifier)
+        column.references = other_table.resolve_column(other_column_id, column.table.identifier + "." + column.identifier)
         # Postgres adds indices for foreign keys
         index = Index("%s_%s_%s_%s" % (column.table.identifier, column.identifier,
                                        column.references.table.identifier, column.references.identifier),
@@ -33,7 +33,7 @@ Column.resolve_references = Column_resolve_references
 def Index_resolve_references(index, table):
     column_list = [table.resolve_column(column_id, index) for column_id in index.column_ids]
     # sort columns if postgres
-    column_list.sort(key=lambda column:column.identifier)
+    column_list.sort(key=(lambda column: column.identifier))
     index.columns = tuple(column_list)
 Index.resolve_references = Index_resolve_references
 

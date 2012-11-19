@@ -34,7 +34,7 @@ def Table_introspect_postgres(table, tables, introspection, cursor):
     for index_name, index_column_numbers, indisunique in cursor.fetchall():
         index = Index(index_name, unique=indisunique)
         index.varchar_pattern_ops = index_name.endswith('_like') # can also look for indclass == 10057
-        index.column_ids = map(lambda s: int(s)-1, str(index_column_numbers).split())
+        index.column_ids = map(lambda s: int(s) - 1, str(index_column_numbers).split())
         table.add_index(index)
 
 Table.introspect_postgres = Table_introspect_postgres
@@ -56,7 +56,7 @@ def Schema_introspect_postgres(schema, connection):
     for (table_name, column_name, ordinal_position, data_type, is_nullable,
          character_maximum_length, numeric_precision, numeric_scale, column_default) in cursor.fetchall():
         table = schema.tables[table_name]
-        column = Column(schema, table, ordinal_position-1, column_name)
+        column = Column(schema, table, ordinal_position - 1, column_name)
         column.nullable = (is_nullable == "YES")
         if character_maximum_length:
             column.data_type = "varchar(%i)" % character_maximum_length

@@ -1,4 +1,5 @@
 
+
 class Table(object):
     def __init__(table, schema, identifier):
         table.schema = schema

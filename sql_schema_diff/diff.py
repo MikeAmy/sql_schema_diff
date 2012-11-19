@@ -1,6 +1,7 @@
 
-from sql_schema_diff.schema import  Table, Index, Column
+from sql_schema_diff.schema import Table, Index, Column
 from sql_schema_diff.schema import Schema
+
 
 class Difference(object):
     def __init__(diff):
@@ -12,29 +13,30 @@ class Difference(object):
         return bool(diff.deletions or diff.additions or diff.changes)
 
     def __unicode__(diff):
-        return u'''%i differences:
+        return (u'''%i differences:
 %i additions:
     %s
 %i deletions:
     %s
 %i changes:
     %s
-''' % (
-        len(diff.additions) + len(diff.deletions) + len(diff.changes),
-        len(diff.additions),
-        u"\n    ".join(map(unicode, diff.additions)),
-        len(diff.deletions),
-        u"\n    ".join(map(unicode, diff.deletions)),
-        len(diff.changes),
-        u"\n    ".join(map(unicode, diff.changes))
-    )
+'''
+        ) % (
+            len(diff.additions) + len(diff.deletions) + len(diff.changes),
+            len(diff.additions),
+            u"\n    ".join(map(unicode, diff.additions)),
+            len(diff.deletions),
+            u"\n    ".join(map(unicode, diff.deletions)),
+            len(diff.changes),
+            u"\n    ".join(map(unicode, diff.changes))
+        )
 
     def changed(diff, thing):
         diff.changes.append(thing)
 
     def compare_dicts(diff, this, other):
         this_keys = set(this.keys())
-        other_keys =  set(other.keys())
+        other_keys = set(other.keys())
         for name in this_keys.intersection(other_keys):
             this[name].diff(other[name], diff)
         for name in this_keys.difference(other_keys):

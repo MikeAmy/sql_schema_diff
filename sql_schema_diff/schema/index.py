@@ -1,4 +1,5 @@
 
+
 class Index(object):
     def __init__(index, identifier, unique):
         index.identifier = identifier

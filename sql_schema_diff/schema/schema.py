@@ -1,4 +1,5 @@
 
+
 class Schema(object):
     def __init__(schema):
         schema.tables = dict()

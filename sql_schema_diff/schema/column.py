@@ -1,7 +1,13 @@
 from sql_schema_diff.schema import Index
 
+
 class Column(object):
-    def __init__(column, schema, table, ordinal_position, identifier,
+    def __init__(
+        column,
+        schema,
+        table,
+        ordinal_position,
+        identifier,
         data_type=None,
         nullable=True,
         unique=False,
@@ -48,6 +54,18 @@ class Column(object):
     def mark_unique(column):
         column.unique = True
         column.create_index(unique=True)
+
+    def set_varchar(column, length):
+        column.set_data_type("varchar(%i)" % length)
+
+    def set_char(column, length):
+        column.set_data_type("char(%s)" % length)
+
+    def set_numeric(column, digits, decimal_places):
+        column.set_data_type("numeric(%i, %i)" % (digits, decimal_places))
+
+    def set_reference(column, table_name, column_id):
+        column.references = (table_name, column_id)
 
     def set_data_type(column, data_type):
         assert column.data_type is None, (column, column.data_type, data_type)
