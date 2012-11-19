@@ -1,18 +1,18 @@
 
 from sql_lexer.sql import Token
 from sql_lexer.lexer import tokenize
-from sql_lexer.tokens import Newline, Whitespace, Punctuation, Keyword
+from sql_lexer.tokens import Newline, Whitespace, Punctuation, Keyword, Comment
 from sql_lexer.keywords import KEYWORDS
 
 from sql_schema_diff import Schema, Table, Index, Column
 
 assert 'VARCHAR' in KEYWORDS
 
-whitespace = (Newline, Whitespace)
+whitespace_or_comment = (Newline, Whitespace, Comment.Single)
 
 
 class Tokens(object):
-    def __init__(tokens, pairs, unneeded=whitespace):
+    def __init__(tokens, pairs, unneeded=whitespace_or_comment):
         if unneeded:
             tokens.pairs = [pair for pair in pairs if pair[0] not in unneeded]
         else:
