@@ -79,7 +79,10 @@ class Column(object):
         column.nullable = False
 
     def __eq__(column, other):
-        return column.identifier == other.identifier
+        if type(other) != Column:
+            return False
+        else:
+            return column.identifier == other.identifier
 
     def __ne__(column, other):
         return not column == other
