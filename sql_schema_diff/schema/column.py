@@ -8,13 +8,13 @@ class Column(object):
         table,
         ordinal_position,
         identifier,
-        data_type=None,
+        data_type="(no data type)",
         nullable=True,
         unique=False,
         primary=False,
-        references=None,
-        unsigned=None,
-        default=None,
+        references="(No reference)",
+        unsigned="(not unsigned)",
+        default="(no default)",
         serial=False,
         deferrable=False
     ):
