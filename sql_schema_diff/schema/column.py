@@ -71,7 +71,7 @@ class Column(object):
         column.references = (table_name, column_id)
 
     def set_data_type(column, data_type):
-        assert column.data_type is None, (column, column.data_type, data_type)
+        assert column.data_type is "(no data type)", (column, column.data_type, data_type)
         column.data_type = data_type
 
     def set_nullable(column):
