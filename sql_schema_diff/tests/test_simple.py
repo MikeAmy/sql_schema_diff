@@ -818,3 +818,96 @@ CREATE TABLE "promotions_partnerroleinarea" (
 COMMIT;
 """)
     schema1.resolve_references()
+
+def test_big_schema_with_comments():
+    schema = Schema()
+    schema.parse(
+    """BEGIN;
+CREATE TABLE "company_office" (
+    "id" serial NOT NULL PRIMARY KEY,
+    "version" bigint NOT NULL,
+    "last_modified_date" timestamp with time zone NOT NULL,
+    "last_modified_user_id" integer NOT NULL,
+    "hash" varchar(255),
+    "date_removed" timestamp with time zone,
+    "name" varchar(50) NOT NULL,
+    "country_id" integer NOT NULL,
+    "type" integer NOT NULL,
+    "slug" varchar(50) NOT NULL UNIQUE
+)
+;
+CREATE TABLE "company_project_geographical_areas" (
+    "id" serial NOT NULL PRIMARY KEY,
+    "project_id" integer NOT NULL,
+    "administrativearea_id" integer NOT NULL,
+    UNIQUE ("project_id", "administrativearea_id")
+)
+;
+CREATE TABLE "company_project" (
+    "id" serial NOT NULL PRIMARY KEY,
+    "version" bigint NOT NULL,
+    "last_modified_date" timestamp with time zone NOT NULL,
+    "last_modified_user_id" integer NOT NULL,
+    "hash" varchar(255),
+    "date_removed" timestamp with time zone,
+    "office_id" integer NOT NULL REFERENCES "company_office" ("id") DEFERRABLE INITIALLY DEFERRED,
+    "name" varchar(50) NOT NULL,
+    "status" integer NOT NULL,
+    "type" integer NOT NULL,
+    "country_id" integer NOT NULL,
+    "start_date" date NOT NULL,
+    "end_date" date,
+    "external_code" varchar(255) NOT NULL,
+    "slug" varchar(50) NOT NULL,
+    UNIQUE ("office_id", "name"),
+    UNIQUE ("office_id", "slug")
+)
+;
+ALTER TABLE "company_project_geographical_areas" ADD CONSTRAINT "project_id_refs_id_1e9e628e" FOREIGN KEY ("project_id") REFERENCES "company_project" ("id") DEFERRABLE INITIALLY DEFERRED;
+CREATE TABLE "company_userprofile" (
+    "id" serial NOT NULL PRIMARY KEY,
+    "user_id" integer NOT NULL UNIQUE,
+    "language" varchar(2) NOT NULL,
+    "time_zone" varchar(50) NOT NULL
+)
+;
+CREATE TABLE "company_partner" (
+    "id" serial NOT NULL PRIMARY KEY,
+    "version" bigint NOT NULL,
+    "last_modified_date" timestamp with time zone NOT NULL,
+    "last_modified_user_id" integer NOT NULL,
+    "hash" varchar(255),
+    "date_removed" timestamp with time zone,
+    "office_id" integer NOT NULL REFERENCES "company_office" ("id") DEFERRABLE INITIALLY DEFERRED,
+    "name" varchar(50) NOT NULL,
+    "address" varchar(300) NOT NULL,
+    "status" integer NOT NULL,
+    "type" integer NOT NULL,
+    "logo" varchar(100),
+    "slug" varchar(50) NOT NULL UNIQUE,
+    UNIQUE ("office_id", "name")
+)
+;
+CREATE TABLE "company_partnerrole" (
+    "id" serial NOT NULL PRIMARY KEY,
+    "version" bigint NOT NULL,
+    "last_modified_date" timestamp with time zone NOT NULL,
+    "last_modified_user_id" integer NOT NULL,
+    "hash" varchar(255),
+    "date_removed" timestamp with time zone,
+    "role" varchar(50) NOT NULL UNIQUE,
+    "description" varchar(300)
+)
+;
+-- The following references should be added but depend on non-existent tables:
+-- ALTER TABLE "company_office_countries" ADD CONSTRAINT "country_id_refs_id_bebf0b9b" FOREIGN KEY ("country_id") REFERENCES "geo_country" ("id") DEFERRABLE INITIALLY DEFERRED;
+-- ALTER TABLE "company_office" ADD CONSTRAINT "country_id_refs_id_2437e634" FOREIGN KEY ("country_id") REFERENCES "geo_country" ("id") DEFERRABLE INITIALLY DEFERRED;
+-- ALTER TABLE "company_project" ADD CONSTRAINT "country_id_refs_id_849a0702" FOREIGN KEY ("country_id") REFERENCES "geo_country" ("id") DEFERRABLE INITIALLY DEFERRED;
+-- ALTER TABLE "company_project_geographical_areas" ADD CONSTRAINT "administrativearea_id_refs_id_8a616b7" FOREIGN KEY ("administrativearea_id") REFERENCES "geo_administrativearea" ("id") DEFERRABLE INITIALLY DEFERRED;
+-- ALTER TABLE "company_office" ADD CONSTRAINT "last_modified_user_id_refs_id_8902c876" FOREIGN KEY ("last_modified_user_id") REFERENCES "auth_user" ("id") DEFERRABLE INITIALLY DEFERRED;
+-- ALTER TABLE "company_project" ADD CONSTRAINT "last_modified_user_id_refs_id_9241258" FOREIGN KEY ("last_modified_user_id") REFERENCES "auth_user" ("id") DEFERRABLE INITIALLY DEFERRED;
+-- ALTER TABLE "company_userprofile" ADD CONSTRAINT "user_id_refs_id_3c991a59" FOREIGN KEY ("user_id") REFERENCES "auth_user" ("id") DEFERRABLE INITIALLY DEFERRED;
+-- ALTER TABLE "company_partner" ADD CONSTRAINT "last_modified_user_id_refs_id_7d008b63" FOREIGN KEY ("last_modified_user_id") REFERENCES "auth_user" ("id") DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+    """)
+    schema.resolve_references()
