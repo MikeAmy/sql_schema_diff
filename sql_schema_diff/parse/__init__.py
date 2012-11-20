@@ -33,13 +33,6 @@ class Tokens(object):
             if piece:
                 use_tokens(Tokens(piece))
 
-    def peek(tokens):
-        """Returns next value without popping"""
-        if len(tokens.pairs):
-            return tokens.pairs[0][1]
-        else:
-            return None
-
     def next(tokens):
         """Pops next token value"""
         return tokens.next_pair()[1]
@@ -49,10 +42,6 @@ class Tokens(object):
         pair = tokens.pairs.pop(0)
         #print pair
         return pair
-
-    def next_token(tokens):
-        """Pops next token"""
-        return Token(*tokens.next_pair())
 
     def expect(tokens, *pattern):
         """Pops tokens and asserts values match pattern.
@@ -224,6 +213,11 @@ class ColumnParser(Parser):
     def NOT_NULL(parser):
         parser.column.nullable = False
 
+    def NOT(parser):
+        parser.tokens.match(
+            (("NULL",), parser.column.set_nullable)
+        )
+
     def NULL(parser):
         parser.column.nullable = True
 
@@ -259,9 +253,10 @@ class ColumnParser(Parser):
 
     def DEFERRABLE(parser):
         parser.column.deferrable = True
-        tokens = parser.tokens
-        if tokens.next() == 'INITIALLY':
-            tokens.expect("DEFERRED")
+        parser.tokens.match(
+            (("INITIALLY", "DEFERRED"), lambda: None),
+            ((), lambda: None)
+        )
 
     def CHECK(parser):
         # TODO: use CHECKs
@@ -433,5 +428,6 @@ class SchemaParser(Parser):
 
 
 def Schema_parse(schema, statements_string):
+    statements_string=("\n".join(string for string in statements_string.split("\n") if not string.startswith("--")))
     SchemaParser(schema, statements_string).parse()
 Schema.parse = Schema_parse

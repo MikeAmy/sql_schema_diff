@@ -71,6 +71,9 @@ class Column(object):
         assert column.data_type is None, (column, column.data_type, data_type)
         column.data_type = data_type
 
+    def set_nullable(column):
+        column.nullable = False
+
     def __eq__(column, other):
         return column.identifier == other.identifier
 
