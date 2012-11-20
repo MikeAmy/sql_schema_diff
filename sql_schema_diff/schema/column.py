@@ -1,5 +1,6 @@
 from sql_schema_diff.schema import Index
 
+NO_DATA_TYPE = "(no data type)"
 
 class Column(object):
     def __init__(
@@ -8,7 +9,7 @@ class Column(object):
         table,
         ordinal_position,
         identifier,
-        data_type="(no data type)",
+        data_type=NO_DATA_TYPE,
         nullable=True,
         unique=False,
         primary=False,
@@ -71,7 +72,7 @@ class Column(object):
         column.references = (table_name, column_id)
 
     def set_data_type(column, data_type):
-        assert column.data_type is "(no data type)", (column, column.data_type, data_type)
+        assert column.data_type is NO_DATA_TYPE, (column, column.data_type, data_type)
         column.data_type = data_type
 
     def set_nullable(column):
