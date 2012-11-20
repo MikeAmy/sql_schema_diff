@@ -62,7 +62,10 @@ class Column(object):
         column.set_data_type("char(%s)" % length)
 
     def set_numeric(column, digits, decimal_places):
-        column.set_data_type("numeric(%i, %i)" % (digits, decimal_places))
+        if decimal_places != 0:
+            column.set_data_type("numeric(%i, %i)" % (digits, decimal_places))
+        else:
+            column.set_data_type("numeric(%i)" % digits)
 
     def set_reference(column, table_name, column_id):
         column.references = (table_name, column_id)

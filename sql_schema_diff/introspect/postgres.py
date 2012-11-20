@@ -59,15 +59,13 @@ def Schema_introspect_postgres(schema, connection):
         column = Column(schema, table, ordinal_position - 1, column_name)
         column.nullable = (is_nullable == "YES")
         if character_maximum_length:
-            column.data_type = "varchar(%i)" % character_maximum_length
+            column.set_varchar(character_maximum_length)
         elif numeric_precision:
-            if numeric_scale != 0:
-                column.data_type = "numeric(%s, %s)" % (numeric_precision, numeric_scale)
-            else:
-                column.data_type = "numeric(%s)" % numeric_precision
+            column.set_numeric(numeric_precision, numeric_scale)
         else:
-            column_parser = ColumnParser(column)
-            getattr(column_parser, data_type.upper().replace(" ", "_"))(None)
+            # HACK: should not be using a parser
+            column_parser = ColumnParser(column, None)
+            column_parser.method(data_type.upper().replace(" ", "_"))
         if column_default:
             column.default = column_default
         table.add_column(column_name, column)
