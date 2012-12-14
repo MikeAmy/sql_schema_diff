@@ -23,7 +23,7 @@ setup(
         'Operating System :: OS Independent',
     ],
     long_description=open(
-        os.path.join(os.path.dirname(__file__), 'README.rst'),
+        os.path.join(os.path.dirname(__file__), 'readme.rst'),
     ).read().strip(),
 #    install_requires=['sql_lexer']
 )
